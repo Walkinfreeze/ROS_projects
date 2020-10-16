@@ -8,6 +8,7 @@ from os import listdir
 from os.path import isfile,join
 import csv
 import sys
+from matplotlib import pyplot as plt
 
 from nav_msgs.msg import *
 np.set_printoptions(threshold=np.inf)
@@ -37,6 +38,25 @@ def callback(data):
     free_surface_vector_.append(free_surface_)
 
     print(occupied_surface_)
+
+    # x axis values 
+    x_ = range(len(free_vector_)) 
+    # corresponding y axis values 
+    y_occupied_ = occupied_vector_
+    y_free_ = free_vector_
+
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    fig.suptitle('Amount of Pixels Occupied/Free')
+    ax1.plot(x_, y_occupied_, 'r', marker='.') 
+    ax1.set_ylabel('occupied pixels')
+    ax1.set_xlabel('map_files')
+    ax1.grid() 
+    ax2.plot(x_, y_free_, 'g', marker='.')
+    ax2.set_xlabel('map files')
+    ax2.set_ylabel('free pixels')
+    ax2.grid()
+    
+    plt.show()
     
 def listener():
 
