@@ -2,25 +2,11 @@
 import re
 import numpy as np
 import rospy
-import sys
-import os
-from os import listdir
-from os.path import isfile,join
     
 # license removed for brevity
 from std_msgs.msg import Float64
-from rospy.numpy_msg import numpy_msg
 from nav_msgs.msg import *
 
-import re
-import numpy as np
-import rospy
-import datetime
-import shutil
-
-
-datetime_object = datetime.datetime.now()
-np.set_printoptions(threshold=np.inf)
 
 def callback(data):
     map_data = data
@@ -61,17 +47,8 @@ def callback(data):
     pub2.publish(occupied_surface_)
     
 def listener():
-
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
     rospy.init_node('listener', anonymous=True)
-
     rospy.Subscriber("map", OccupancyGrid, callback)
-
-
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

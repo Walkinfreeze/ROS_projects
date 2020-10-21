@@ -12,7 +12,6 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 from nav_msgs.msg import *
-from std_msgs.msg import Float64
 import datetime
 import shutil
 
@@ -36,19 +35,38 @@ class Visualiser:
         self.ax.set_ylim(0, 1)
         return self.ln
 
-    def callback(self, data1):
-        map_quality_ = data1.data
+    def callback(self, data):
+        map_data = data
+        map_ = np.array(map_data.data).reshape(map_data.info.height, map_data.info.width)
+        
+        free_ = 0;
+        occupied_ = 0;
+        for i in range(map_.shape[0]):
+           for j in range(map_.shape[1]):
+              if map_[i,j] > 60:
+                      occupied_ += 1
+                      map_[i,j]=0
+              else:
+                      free_ += 1
+                      map_[i,j]=1
+        occupied_vector_ = []
+        occupied_surface_vector_ = []
+        free_vector_ = []
+        free_surface_vector_ = []
 
-        self.y_data.append(map_quality_)
+        occupied_surface_ = occupied_ * map_data.info.resolution 
+        free_surface_ = free_ * map_data.info.resolution    
+        occupied_vector_.append(occupied_)
+        free_vector_.append(free_)
+        occupied_surface_vector_.append(occupied_surface_)
+        free_surface_vector_.append(free_surface_)
+  
+        X = np.arange(len(free_vector_)) 
+        
+        self.y_data.append(occupied_)
         x_index = len(self.x_data)
-        self.x_data.append(x_index)
-
-    def callback_map(self, data2):
-        bin_map_= data2.data
-        binary_map_ = np.array(data2.data).reshape(data2.info.height, data2.info.width)
-        datetime_object1 = datetime.datetime.now()
-        my_file_map = str(datetime_object1) +'_map'+'.png'
-        plt.imsave(os.path.join(my_path1, my_file_map), binary_map_, cmap="gray")
+        self.x_data.append(x_index+1)
+        print(self.y_data)
 
     def update_plot(self, frame):
         self.ln.set_data(self.x_data,self.y_data)
@@ -57,10 +75,9 @@ class Visualiser:
         plt.draw()
         return self.ln
 
+rospy.init_node('listener', anonymous=True) 
 vis= Visualiser()
-rospy.init_node('listener', anonymous=True)
-sub1=rospy.Subscriber("binary_map", OccupancyGrid, vis.callback_map) 
-sub2=rospy.Subscriber("map_quality", Float64 , vis.callback)
+rospy.Subscriber("map", OccupancyGrid, vis.callback)
 ani = FuncAnimation(vis.fig, vis.update_plot) #init_func=vis.plot_init
 
 plt.show(block=True) 
