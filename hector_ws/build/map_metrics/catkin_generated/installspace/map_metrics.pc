@@ -1,0 +1,8 @@
+prefix=/home/tue-me-minicar-laptop-02/hector_ws/install
+
+Name: map_metrics
+Description: Description of map_metrics
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

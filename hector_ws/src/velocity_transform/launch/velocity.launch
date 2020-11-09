@@ -1,0 +1,34 @@
+<launch>
+
+    <param name="/use_sim_time" value="true"/>
+
+    <?ignore <node pkg="rosbag" type="play" name="play" args="--clock /home/marzhan/catkin_ws/src/bagfiles/hec_vel_data3.bag"/>?>   
+
+    <?ignore <node pkg="rosbag" type="play" name="play2" args="--clock /home/marzhan/catkin_ws/src/bagfiles/filter_vel_data3.bag"/>?>   
+
+
+    <?ignore <node pkg="rosbag" type="record" args="-o /home/marzhan/catkin_ws/src/ /theta_hec" name="record"/>?>
+
+
+    <node pkg="rosbag" name="player" type="play" args="--clock /home/tue-me-minicar-laptop-02/Downloads/uturn_right_long.bag"/>
+
+  <include file="/home/tue-me-minicar-laptop-02/hector_ws/src/scan_tools/laser_scan_matcher/launch/ab_vel.launch"/>
+
+<include file="/home/tue-me-minicar-laptop-02/hector_ws/src/hector_slam/hector_slam_launch/launch/racecar_mapping.launch"/>
+
+<!-- Rqt_Plot -->
+<node name="vel_plot" pkg="rqt_plot" type="rqt_plot" args="/vel_hec/linear/x /vel_abf/linear/x /vel_lsm/twist/twist/linear/x" />
+
+<node name="delta_plot" pkg="rqt_plot" type="rqt_plot" args="/delta /delta_abf /delta_lsm" />
+
+    <!-- Rqt_Plot -->
+    <?ignore <node name="pos_vel_plot" pkg="rqt_plot" type="rqt_plot" args="/delta_abf /delta" />?> 
+####/vel_tf/linear/x   /vel_tf/linear/x /vel_lsm/twist/twist/linear/x  /vel_hec/linear/x /vel_abf/linear/x#####
+
+   <node pkg="velocity_transform" type="velocity_transform_node" name="velocity_transform_node" output="screen">
+    </node>
+   
+
+   
+
+</launch> 
